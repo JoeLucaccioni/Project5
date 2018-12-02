@@ -1,55 +1,43 @@
 $(document).ready(function(){
 	
-	konvaTest();
+	drawCircle();
 	
-	$(window).keypress(function(e) {
-		
-		var deltaX = 0;
-		var deltaY = 0;
+	var deltaX = 0;
+	var deltaY = 0;
 	
-	
-	   switch(e.keyCode){
+	$(window).keypress(function(e) { // On Keypress, adjust position variables and redraw the circle
+	  //console.log(e.keyCode); // used for checking keyCodes
+	  switch(e.keyCode){
 		   
-		   case 97:
-		   
-			console.log('A');
-			
-			deltaX -= 2;
-			console.log(deltaX);
-			
+		case 97: // A
+		   	
+			deltaX -= 5;
+			//console.log(deltaX);
+			drawCircle();
 			break;
 			
-			case 100:
-			
-			console.log('D');
-			
-			deltaY += 2;
-			console.log(deltaY);
-			
+		case 100: // D
+						
+			deltaX += 5;
+			//console.log(deltaX);
+			drawCircle();
 			break;
-		   
+			
+		case 115: // W
+			
+			deltaY += 5;
+			drawCircle();
+			break;
+			
+		case 119: // S
+			
+			deltaY -= 5;
+			drawCircle();
+			break;
 	   }
-	   
-	   //console.log(key);
-	   /* if(key === 97)
-	   {
-		   console.log('A');
-		   
-	   }
-	   
-	   if(key === 100)
-	   {
-		   console.log('D');
-	   } */
-    });
+	});
 	
-	function aPress(){
-	
-		
-	
-	}
-		
-	function konvaTest(){
+	function drawCircle(){
 		var width = window.innerWidth;
 		var height = window.innerHeight;
     
@@ -62,14 +50,15 @@ $(document).ready(function(){
 		var layer = new Konva.Layer();
 
 		var circle = new Konva.Circle({
-			x: stage.getWidth() / 2,
-			y: stage.getHeight() / 2,
-			//console.log(x);
+			x: (stage.getWidth() / 2) + deltaX, // Position is starting position + change in position
+			y: (stage.getHeight() / 2) + deltaY,
 			radius: 70,
 			fill: 'red',
 			stroke: 'black',
 			strokeWidth: 4
 		});
+		
+		//console.log(circle.x); //doesn't return an integer
 
 		// add the shape to the layer
 		layer.add(circle);
