@@ -37,7 +37,7 @@ $(document).ready(function(){
 	   }
 	});
 	
-	function drawCircle(){
+	function drawCircle(){ //These New functions cause memory leak, fix asap
 		var width = window.innerWidth;
 		var height = window.innerHeight;
     
