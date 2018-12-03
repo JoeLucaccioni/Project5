@@ -9,9 +9,6 @@ function updateBall(frame) {
     var x = ball.getX();
     var y = ball.getY();
     var radius = ball.getRadius();
-
-    tween.reverse();
-
     // physics variables
     var gravity = 10;
     // px / second^2
@@ -126,13 +123,6 @@ ball.velocity = {
 
 ballLayer.add(ball);
 stage.add(ballLayer);
-
-var tween = new Konva.Tween({
-    node: ball,
-    fill: 'red',
-    duration: 0.3,
-    easing: Konva.Easings.EaseOut
-});
     
 anim = new Konva.Animation(function(frame) {
     updateBall(frame);
