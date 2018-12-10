@@ -60,7 +60,7 @@ io.sockets.on('connection', function(socket) {
 
 //for processing and sending keystrokes
 function sendOutput(output,socket) {
-	console.log(output);
+	//console.log(output);
     con.output(output, function (err, result, fields) { //not sure what's going on here
 		if (err) throw err;
 		var results = [];
