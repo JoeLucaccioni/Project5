@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+	//Draw Circle
 	drawCircle();
 	
 	var deltaX = 0;
