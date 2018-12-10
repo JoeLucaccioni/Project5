@@ -126,6 +126,7 @@ var ballLayer = new Konva.Layer();
 var radius = 20;
 var anim;
 var pillarLayer = new Konva.Layer();
+var swordLayer = new Konva.Layer();
 
 // create ball
 var ball = new Konva.Circle({
@@ -134,6 +135,15 @@ var ball = new Konva.Circle({
     radius: radius,
     fill: 'blue',
     opacity: 0.8
+});
+
+// create sword
+var sword = new Konva.Rect({
+	x: 200,
+	y: 500,
+	width: 3,
+	height:30,
+	fill: 'blue'
 });
 
 //obstacle
@@ -153,6 +163,7 @@ ball.velocity = {
 
 pillarLayer.add(pillar);
 ballLayer.add(ball);
+swordLayer.add(sword)
 stage.add(ballLayer, pillarLayer);
     
 anim = new Konva.Animation(function(frame) {
