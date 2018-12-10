@@ -1,51 +1,36 @@
-//By: Joe Lucaccioni
-// Based off code By: Jim Skon
-// THis code using Socket.io to talk to a Node.js programm running on the server.
-// The port used for this MUST match the port used on the server side, and must note be a port
-// used by anyone else.
-var port='8948' // Must match port used on server, port>8000
-var operation;	// operation
-var selectid;
-var recIndex
-var socket = io.connect('http://cslab.kenyon.edu:'+port);
-var rows;
-var url = [];
-
-var player = 'p1'; //identifies if player one or two (left or right)
-
 var width = window.innerWidth;
 var height = window.innerHeight;
 
-console.log("work");
+//detects and handles collision
+function handleCollision() {
+	var targetRect = pillar.getClientRect();
+	var mover = ball.getClientRect();
+    var x = ball.getX();
+    var y = ball.getY();
+	
+	if(intersect(mover, targetRect)){
+		console.log("collision");
+    	ball.velocity.x *= -1;
+    	ball.velocity.y *= -1;
+    	ball.velocity.x *= 0;
+    	ball.velocity.y *= 0;
+    }
+    ball.setPosition({x:x, y:y});
+}
 
-$(document).ready(function () {
-	console.log("work");
-    // this is an event handler for a message on socket.io from the server side.
-    // For this program is will be a reponse to a request from this page for an action
-    socket.on('message', function(message) {
-	// 'rows' message contains a set of matching rows from the database to be displayed
-	// This is a response to a query
-  		if (message.operation == 'movement') {
-	   		processResults(message.direction);
-  		} 
-    });
-});
-
-function processResults(var moving){
-	if(moving == 'L'){
-		ball.velocity.x = -5;
-		console.log("moving L");
-	}else if(moving == 'R')
-		ball.velocity.x = 5;
-	else if(moving == 'Up')
-		ball.velocity.y = -6;
+//detects an intersection, returns true if there is.
+function intersect(r1, r2) {
+	return !(
+                r2.x > r1.x + r1.width ||
+                r2.x + r2.width < r1.x ||
+                r2.y > r1.y + r1.height ||
+                r2.y + r2.height < r1.y
+            );
 }
 
 function updateBall(frame) {
     var timeDiff = frame.timeDiff;
     var stage = ball.getStage();
-    var height = stage.getHeight();
-    var width = stage.getWidth();
     var x = ball.getX();
     var y = ball.getY();
     var radius = ball.getRadius();
@@ -94,31 +79,41 @@ function updateBall(frame) {
     // right wall condition
     if(x > (width - radius)) {
         x = width - radius;
-        ball.velocity.x *= 0;
+        ball.velocity.x *= -1;
+        ball.velocity.x *= (1 - collisionDamper);
     }
 
     // left wall condition
     if(x < radius) {
         x = radius;
-        ball.velocity.x *= 0;
+        ball.velocity.x *= -1;
+        ball.velocity.x *= (1 - collisionDamper);
     }
     
     $(window).keypress(function(e) { // On Keypress, adjust position variables and redraw the circle
 		switch(e.keyCode){
 		   
 			case 97: // A
-		   		movement('A');
+		   	
+				ball.velocity.x = -5;
+				break;
 			
 			case 100: // D
-				movement('D');
+						
+				ball.velocity.x = 5;
+				break;
 			
 			case 119: // W
-				if(ball.velocity.y == 0)
-					movement('W');
+				if(ball.velocity.y == 0){
+					ball.velocity.y = -6;
+					break;
+				}
 		};
 	});
 
     ball.setPosition({x:x, y:y});
+    
+    handleCollision();
 }
 
 var stage = new Konva.Stage({
@@ -130,6 +125,7 @@ var stage = new Konva.Stage({
 var ballLayer = new Konva.Layer();
 var radius = 20;
 var anim;
+var pillarLayer = new Konva.Layer();
 
 // create ball
 var ball = new Konva.Circle({
@@ -137,8 +133,16 @@ var ball = new Konva.Circle({
     y: 500,
     radius: radius,
     fill: 'blue',
-    draggable: true,
     opacity: 0.8
+});
+
+//obstacle
+var pillar = new Konva.Rect({
+	x: 250,
+	y: 740,
+	width: 20,
+	height:50,
+	fill: 'black'
 });
 
 // custom property
@@ -147,20 +151,12 @@ ball.velocity = {
     y: 0
 };
 
+pillarLayer.add(pillar);
 ballLayer.add(ball);
-stage.add(ballLayer);
+stage.add(ballLayer, pillarLayer);
     
 anim = new Konva.Animation(function(frame) {
     updateBall(frame);
 }, ballLayer);
 
 anim.start();
-
-function movement(var keystroke){
-	socket.emit('message', {
-		operation: 'move',
-		moveKey: keystroke,
-		avatar: player
-	});
-	console.log("movement key: " keystoke)
-}
