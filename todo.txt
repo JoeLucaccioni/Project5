@@ -1,0 +1,31 @@
+To Do:
+
+*************************
+Minimum Viable prototype:
+*************************
+
+sychronize gamplay across users.
+
+A sword
+
+score counter
+
+
+*********************
+Minimum Viable Final:
+*********************
+
+Multiple players each in control of their own character
+
+**************
+Stretch Goals:
+**************
+
+more complicated attacks
+
+stick figures
+
+Background art
+
+multiple simultaneous lobbies
+
