@@ -1,0 +1,27 @@
+h1, h2, h3, h4, h5, h6{
+	
+	text-align: center;
+	
+}
+
+table {
+	margin: auto;
+  	border-collapse: collapse;
+}
+
+table, td, th {
+	text-align: center;
+  	border: 1px solid black;
+}
+
+td{
+	font-size: 10;
+	padding: 5px;
+	border-spacing: 5px;
+}
+
+#game{
+	width: 100%;
+	height: 100%;
+    border: 5px solid blue;
+}
