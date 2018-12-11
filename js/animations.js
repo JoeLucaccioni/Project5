@@ -3,6 +3,10 @@ var port = 8437;
 
 var keyStroke;
 
+var leftHits = 0;
+var rightHits = 0;
+var countDown = 100;
+
 $(document).ready(function () {
     // this is an event handler for a message on socket.io from the server side.
     // For this program it will produce an animation based on the server's output
@@ -31,8 +35,33 @@ $(document).ready(function () {
 		
 		
 	});
-	
+	timer();
+	var time = countDown;
+	$("#timer").append(time);
+	$("#counterR").append(rightHits);
+	$("#counterL").append(leftHits);
 });
+
+//times the match
+function timer(){ 	
+				
+	$('#timer').text(countDown);
+		
+   	setTimeout(function () {
+					
+		countDown--;   
+		console.log(countDown);
+			
+			
+      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        	timer();              
+      	}
+      	else{
+      		countDown = 0;
+      	}
+			
+   	}, 1000);
+}
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -97,6 +126,11 @@ function updateBall(frame) {
 
     // right wall condition
     if(x > (width - radius)) {
+    	console.log("hit right wall");
+    	rightHits++;
+    	$("#counterR").empty()
+		$("#counterR").append(rightHits);
+    	console.log(rightHits);
         x = width - radius;
         ball.velocity.x *= -1;
         ball.velocity.x *= (1 - collisionDamper);
@@ -104,6 +138,11 @@ function updateBall(frame) {
 
     // left wall condition
     if(x < radius) {
+    	console.log("hit left wall");
+    	leftHits++;
+    	$("#counterL").empty();
+    	$("#counterL").append(leftHits);
+    	console.log(leftHits);
         x = radius;
         ball.velocity.x *= -1;
         ball.velocity.x *= (1 - collisionDamper);
