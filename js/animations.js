@@ -3,6 +3,10 @@ var port = 8437;
 
 var keyStroke;
 
+var leftHits = 0;
+var rightHits = 0;
+var countDown = 100;
+
 $(document).ready(function () {
     // this is an event handler for a message on socket.io from the server side.
     // For this program it will produce an animation based on the server's output
@@ -31,8 +35,33 @@ $(document).ready(function () {
 		
 		
 	});
-	
+	timer();
+	var time = countDown;
+	$("#timer").append(time);
+	$("#counterR").append(rightHits);
+	$("#counterL").append(leftHits);
 });
+
+//times the match
+function timer(){ 	
+				
+	$('#timer').text(countDown);
+		
+   	setTimeout(function () {
+					
+		countDown--;   
+		console.log(countDown);
+			
+			
+      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        	timer();              
+      	}
+      	else{
+      		countDown = 0;
+      	}
+			
+   	}, 1000);
+}
 
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -97,6 +126,11 @@ function updateBall(frame) {
 
     // right wall condition
     if(x > (width - radius)) {
+    	console.log("hit right wall");
+    	rightHits++;
+    	$("#counterR").empty()
+		$("#counterR").append(rightHits);
+    	console.log(rightHits);
         x = width - radius;
         ball.velocity.x *= -1;
         ball.velocity.x *= (1 - collisionDamper);
@@ -104,6 +138,11 @@ function updateBall(frame) {
 
     // left wall condition
     if(x < radius) {
+    	console.log("hit left wall");
+    	leftHits++;
+    	$("#counterL").empty();
+    	$("#counterL").append(leftHits);
+    	console.log(leftHits);
         x = radius;
         ball.velocity.x *= -1;
         ball.velocity.x *= (1 - collisionDamper);
@@ -129,8 +168,12 @@ function updateBall(frame) {
 				}
 		};
 	});
-
+	
+	//Sets the x,y postion of the ball
     ball.setPosition({x:x, y:y});
+    
+    //Sets the x,y postion of the sword based on the movement of the ball
+    sword.setPosition({x:(x+50), y:y-20});
 
     /*
      * if the ball comes into contact with the
@@ -145,9 +188,16 @@ var stage = new Konva.Stage({
     height: height
 });
 
+//declaring ball variables
 var ballLayer = new Konva.Layer();
 var radius = 20;
 var anim;
+
+//declaring sword variables
+var swordLayer = new Konva.Layer();
+var sword_w=2;  //sword width
+var sword_h=30; //sword height
+var sword_a=35; //sword angle
 
 // create ball
 var ball = new Konva.Circle({
@@ -159,14 +209,25 @@ var ball = new Konva.Circle({
     opacity: 0.8
 });
 
+// create sword
+var sword = new Konva.Rect({
+	x: 240,
+	y: 500,
+	width: sword_w,
+	height: sword_h,
+	rotation: sword_a,
+	fill: 'blue'
+});
+
 // custom property
 ball.velocity = {
     x: 0,
     y: 0
 };
 
+swordLayer.add(sword);
 ballLayer.add(ball);
-stage.add(ballLayer);
+stage.add(ballLayer, swordLayer);
 
 var tween = new Konva.Tween({
     node: ball,
@@ -174,9 +235,17 @@ var tween = new Konva.Tween({
     duration: 0.3,
     easing: Konva.Easings.EaseOut
 });
-    
+  
+//Animation that moves ball    
 anim = new Konva.Animation(function(frame) {
     updateBall(frame);
 }, ballLayer);
 
 anim.start();
+
+//Animation that moves sword
+anim2 = new Konva.Animation(function(frame) {
+    updateBall(frame);
+}, swordLayer);
+
+anim2.start();
