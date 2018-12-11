@@ -32,6 +32,12 @@ $(window).keypress(function(e) { // On Keypress, update input and emit it to the
 			input='W';
 			//console.log(input);
 			break;
+			
+		//case 32: // 'space'
+			
+			//input='space';
+			//console.log(input);
+			//break;
 	   }
 	   socket.emit('message', {
     	operation: 'input',
