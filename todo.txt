@@ -6,9 +6,9 @@ Minimum Viable prototype:
 
 sychronize gamplay across users.
 
-A sword
+A sword //done
 
-score counter
+score counter //done
 
 
 *********************
