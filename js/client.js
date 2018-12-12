@@ -3,6 +3,10 @@ var socket = io.connect('http://cslab.kenyon.edu:'+port);
 
 var serverOutput;
 
+var leftHits = 0;
+var rightHits = 0;
+var countDown = 100;
+
 $(document).ready(function () {
 	
 	$(window).keypress(function(e) { // On Keypress, update input and emit it to the server
@@ -44,7 +48,7 @@ $(document).ready(function () {
 	   
 	});
 	
-socket.on('message', function(message) { //Event Handler for parsing server messages and moving the ball
+	socket.on('message', function(message) { //Event Handler for parsing server messages and moving the ball
 		
 		serverOutput=message.output;
 		//console.log(serverOutput);
@@ -53,122 +57,191 @@ socket.on('message', function(message) { //Event Handler for parsing server mess
 		   
 			case 'A': // A
 		   	
-				ball.velocity.x = -5;
+				rctA.velocity.x = -5;
 				break;
 			
 			case 'D': // D
 						
-				ball.velocity.x = 5;
+				rctA.velocity.x = 5;
 				break;
 			
 			case 'W': // W
-				if(ball.velocity.y == 0){
-					ball.velocity.y = -6;
+				if(rctA.velocity.y == 0){
+					rctA.velocity.y = -6;
 					break;
 				}
 		};
 		
 	});
+	timer();
+	var time = countDown;
+	$("#timer").append(time);
+	$("#counterR").append(rightHits);
+	$("#counterL").append(leftHits);
+});
+
+//times the match
+function timer(){ 	
+				
+	$('#timer').text(countDown);
+		
+   	setTimeout(function () {
+					
+		countDown--;   
+		console.log(countDown);
+			
+			
+      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        	timer();              
+      	}
+      	else{
+      		countDown = 0;
+      	}
+			
+   	}, 1000);
+}
+
+//detects and handles collision
+function handleCollision() {
+	var targetRectA = swordA.getClientRect();
+	var targetRectB = swordB.getClientRect();
+	var moverA = rctA.getClientRect();
+	var moverB = rctB.getClientRect();
+    var xA = rctA.getX();
+    var yA = rctA.getY();
 	
-	var width = window.innerWidth;
-	var height = window.innerHeight;
+	if(intersect(moverA, targetRectB)){
+    	//rctA.velocity.x *= 0;
+    	//rctA.velocity.y *= 0;
+    	console.log("right player lands hit");
+    	rightHits++;
+    	$("#counterR").empty()
+		$("#counterR").append(rightHits);
+    }
+    if(intersect(moverB, targetRectA)){
+    	//rctA.velocity.x *= 0;
+    	//rctA.velocity.y *= 0;
+    	console.log("left player lands hit");
+    	leftHits++;
+    	$("#counterL").empty()
+		$("#counterL").append(leftHits);
+    }
+    if(intersect(moverA, moverB)){
+		console.log("collision");
+    	rctA.velocity.x *= 0;
+    	rctA.velocity.y *= 0;
+    	rctA.setPosition({x:xA-1, y:yA});
+    }
+}
+
+//detects an intersection, returns true if there is.
+function intersect(r1, r2) {
+	return !(
+                r2.x > r1.x + r1.width ||
+                r2.x + r2.width < r1.x ||
+                r2.y > r1.y + r1.height ||
+                r2.y + r2.height < r1.y
+            );
+}
 	
-	//physics variables
-	var floorFriction = 10;
-	var gravity = 10;
-	// px / second^2
-	var collisionDamper = 1;
-	// full energy loss
+var width = window.innerWidth;
+var height = window.innerHeight-30;
 	
-	var leftHits = 0;
-	var rightHits = 0;
+//physics variables
+var floorFriction = 10;
+var gravity = 10;
+// px / second^2
+var collisionDamper = 1;
+// full energy loss
 	
-	function updateBall(frame) {
+var leftHits = 0;
+var rightHits = 0;
+	
+function updateRect(frame) {
     var timeDiff = frame.timeDiff;
     //var stage = ball.getStage();
     //var height = stage.getHeight();
     //var width = stage.getWidth();
-    var x = ball.getX();
-    var y = ball.getY();
+    var xA = rctA.getX();
+    var yA = rctA.getY();
+    var xB = rctB.getX();
+    var yB = rctB.getY();
     //var radius = ball.getRadius();
 
-    tween.reverse();
-
     // physics variables
-    
     var speedIncrementFromGravityEachFrame = gravity * timeDiff / 1000;
-    
-    
     // px / second^2
     var floorFrictionSpeedReduction = floorFriction * timeDiff / 1000;
 
     // gravity
-    ball.velocity.y += speedIncrementFromGravityEachFrame;
-    x += ball.velocity.x;
-    y += ball.velocity.y;
+    rctA.velocity.y += speedIncrementFromGravityEachFrame;
+    xA += rctA.velocity.x;
+    yA += rctA.velocity.y;
+    rctB.velocity.y += speedIncrementFromGravityEachFrame;
+    xB += rctB.velocity.x;
+    yB += rctB.velocity.y;
 
     // ceiling condition
-    if(y < radius) {
-        y = radius;
-        ball.velocity.y *= -1;
-        ball.velocity.y *= (1 - collisionDamper);
+    if(yA < radius) {
+        yA = radius;
+        rctA.velocity.y *= -1;
+        rctA.velocity.y *= (1 - collisionDamper);
     }
 
     // floor condition
-    if(y > (height - radius)) {
-        y = height - radius;
-        ball.velocity.y *= -1;
-        ball.velocity.y *= (1 - collisionDamper);
+    if(yA > (height - radius)) {
+        yA = height - radius;
+        rctA.velocity.y *= -1;
+        rctA.velocity.y *= (1 - collisionDamper);
+    }
+    if(yB > (height - radius)) {
+        yB = height - radius;
+        rctB.velocity.y *= -1;
+        rctB.velocity.y *= (1 - collisionDamper);
     }
     
     // floor friction
-    if(ball.velocity.x != 0) {
-    	if(ball.velocity.x > 0.1) {
-                ball.velocity.x -= floorFrictionSpeedReduction;
+    if(rctA.velocity.x != 0) {
+    	if(rctA.velocity.x > 0.1) {
+                rctA.velocity.x -= floorFrictionSpeedReduction;
         }
-        else if(ball.velocity.x < -0.1) {
-            ball.velocity.x += floorFrictionSpeedReduction;
+        else if(rctA.velocity.x < -0.1) {
+            rctA.velocity.x += floorFrictionSpeedReduction;
         }
         else {
-            ball.velocity.x = 0;
+            rctA.velocity.x = 0;
         }
     }
 
     // right wall condition
-    if(x > (width - radius)) {
-    	console.log("hit right wall");
-    	rightHits++;
-    	$("#counterR").empty()
-		$("#counterR").append(rightHits);
-    	console.log(rightHits);
-        x = width - radius;
-        ball.velocity.x *= -1;
-        ball.velocity.x *= (1 - collisionDamper);
+    if(xA > (width - radius)) {
+        xA = width - radius;
+        rctA.velocity.x *= -1;
+        rctA.velocity.x *= (1 - collisionDamper);
     }
 
     // left wall condition
-    if(x < radius) {
-    	console.log("hit left wall");
+    if(xA < radius) {
+    	/*console.log("hit left wall");
     	leftHits++;
     	$("#counterL").empty();
     	$("#counterL").append(leftHits);
-    	console.log(leftHits);
-        x = radius;
-        ball.velocity.x *= -1;
-        ball.velocity.x *= (1 - collisionDamper);
+    	console.log(leftHits);*/
+        xA = radius;
+        rctA.velocity.x *= -1;
+        rctA.velocity.x *= (1 - collisionDamper);
     }
 	
-		//Sets the x,y postion of the ball
-    ball.setPosition({x:x, y:y});
+	//Sets the x,y postion of the ball
+    rctA.setPosition({x:xA, y:yA});
+    rctB.setPosition({x:xB, y:yB});
     
     //Sets the x,y postion of the sword based on the movement of the ball
-    sword.setPosition({x:(x+50), y:y-20});
+    swordA.setPosition({x:(xA+65), y:yA-30});
+    swordB.setPosition({x:(xB-30), y:yB-30});
 
-    /*
-     * if the ball comes into contact with the
-     * curve, then bounce it in the direction of the
-     * curve's surface normal
-    */
+	//detects collision between swords and balls
+	handleCollision();
 }
 
 var stage = new Konva.Stage({
@@ -178,28 +251,39 @@ var stage = new Konva.Stage({
 });
 
 //declaring ball variables
-var ballLayer = new Konva.Layer();
-var radius = 20;
+var rctLayer = new Konva.Layer();
+var radius = 40;
 var anim;
 
 //declaring sword variables
 var swordLayer = new Konva.Layer();
-var sword_w=2;  //sword width
-var sword_h=30; //sword height
+var sword_w=4;  //sword width
+var sword_h=70; //sword height
 var sword_a=35; //sword angle
 
-// create ball
-var ball = new Konva.Circle({
+// create ballA
+var rctA = new Konva.Rect({
     x: 190,
     y: 500,
-    radius: radius,
+    width: radius,
+    height: radius,
     fill: 'blue',
-    draggable: true,
     opacity: 0.8
 });
 
-// create sword
-var sword = new Konva.Rect({
+
+// create ballB
+var rctB = new Konva.Rect({
+    x: width-190,
+    y: 500,
+    width: radius,
+    height: radius,
+    fill: 'red',
+    opacity: 0.8
+});
+
+// create swordA
+var swordA = new Konva.Rect({
 	x: 240,
 	y: 500,
 	width: sword_w,
@@ -208,35 +292,49 @@ var sword = new Konva.Rect({
 	fill: 'blue'
 });
 
+// create swordB
+var swordB = new Konva.Rect({
+	x: width-240,
+	y: 500,
+	width: sword_w,
+	height: sword_h,
+	rotation: -sword_a,
+	fill: 'red'
+});
+
 // custom property
-ball.velocity = {
+rctA.velocity = {
     x: 0,
     y: 0
 };
 
-swordLayer.add(sword);
-ballLayer.add(ball);
-stage.add(ballLayer, swordLayer);
+// custom property
+rctB.velocity = {
+    x: 0,
+    y: 0
+};
 
-var tween = new Konva.Tween({
+swordLayer.add(swordA, swordB);
+rctLayer.add(rctA, rctB);
+stage.add(rctLayer, swordLayer);
+
+/*var tween = new Konva.Tween({
     node: ball,
     fill: 'red',
     duration: 0.3,
     easing: Konva.Easings.EaseOut
-});
+});*/
   
 //Animation that moves ball    
 anim = new Konva.Animation(function(frame) {
-    updateBall(frame);
-}, ballLayer);
+    updateRect(frame);
+}, rctLayer);
 
 anim.start();
 
 //Animation that moves sword
 anim2 = new Konva.Animation(function(frame) {
-    updateBall(frame);
+    updateRect(frame);
 }, swordLayer);
 
 anim2.start();
-	
-});
