@@ -2,12 +2,17 @@ var port=8437;
 var socket = io.connect('http://cslab.kenyon.edu:'+port);
 
 var serverOutput;
-
+var userNumber;
 var leftHits = 0;
 var rightHits = 0;
 var countDown = 100;
 
+
 $(document).ready(function () {
+	
+	socket.emit('message', { //establish communication with server
+	    operation: "join"
+	});
 	
 	$(window).keypress(function(e) { // On Keypress, update input and emit it to the server
 	  //console.log(e.keyCode); // used for checking keyCodes
@@ -41,15 +46,23 @@ $(document).ready(function () {
 			//console.log(input);
 			break;
 	   }
-	   //console.log(input);
+	   //console.log(userNumber);
 	   socket.emit('message', {
 	   	operation: 'input',
 		input: input
+		//input: input + userNumber
 	   });
 	   
 	});
 	
+	
+	
 	socket.on('message', function(message) { //Event Handler for parsing server messages and moving the ball
+		  
+		if (message.operation == 'userNumber') {
+			userNumber=message.userNumber;
+			//console.log(userNumber);
+		}	
 		if(message.operation = 'movement'){
 			serverOutput=message.output;
 			//console.log(serverOutput);
