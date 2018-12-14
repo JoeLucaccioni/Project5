@@ -4,6 +4,7 @@ h1, h2, h3, h4, h5, h6{
 	
 }
 
+
 table {
 	margin: auto;
   	border-collapse: collapse;
@@ -20,8 +21,12 @@ td{
 	border-spacing: 5px;
 }
 
-#game{
+#container{
+	
 	width: 100%;
+	
 	height: 100%;
-    border: 5px solid blue;
+	
+	/*border: 5px solid blue;*/
+
 }
