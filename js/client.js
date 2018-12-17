@@ -61,10 +61,12 @@ $(document).ready(function () {
 		  
 		if (message.operation == 'userNumber') {
 			userNumber=message.userNumber;
-			//console.log(userNumber);
+			console.log("user number assigned");
 		}
 		
 		if(message.operation = 'movement'){
+			
+			console.log(message.userNumber);
 			
 			if(message.userNumber==1){
 				
@@ -93,7 +95,7 @@ $(document).ready(function () {
 		
 		if(message.operation = 'movement'){
 			
-			console.log(message.userNumer);
+			console.log(message.userNumber);
 			
 			if(message.userNumber==2){
 				
@@ -123,7 +125,7 @@ $(document).ready(function () {
 	});
 	timer();
 	var time = countDown;
-	$("#timer").append(time);
+	//$("#timer").html(time);
 	$("#counterR").append(rightHits);
 	$("#counterL").append(leftHits);
 });
@@ -242,6 +244,12 @@ function updateRect(frame) {
         rctA.velocity.y *= -1;
         rctA.velocity.y *= (1 - collisionDamper);
     }
+	
+	if(yB < radius) {
+        yB = radius;
+        rctB.velocity.y *= -1;
+        rctB.velocity.y *= (1 - collisionDamper);
+    }
 
     // floor condition
     if(yA > (height - radius)) {
@@ -267,6 +275,18 @@ function updateRect(frame) {
             rctA.velocity.x = 0;
         }
     }
+	//for the second ball as well
+	if(rctB.velocity.x != 0) {
+    	if(rctB.velocity.x > 0.1) {
+                rctB.velocity.x -= floorFrictionSpeedReduction;
+        }
+        else if(rctB.velocity.x < -0.1) {
+            rctB.velocity.x += floorFrictionSpeedReduction;
+        }
+        else {
+            rctB.velocity.x = 0;
+        }
+    }
 
     // right wall condition
     if(xA > (width - radius)) {
@@ -274,17 +294,24 @@ function updateRect(frame) {
         rctA.velocity.x *= -1;
         rctA.velocity.x *= (1 - collisionDamper);
     }
+	
+	if(xB > (width - radius)) {
+        xB = width - radius;
+        rctB.velocity.x *= -1;
+        rctB.velocity.x *= (1 - collisionDamper);
+    }
 
     // left wall condition
     if(xA < radius) {
-    	/*console.log("hit left wall");
-    	leftHits++;
-    	$("#counterL").empty();
-    	$("#counterL").append(leftHits);
-    	console.log(leftHits);*/
         xA = radius;
         rctA.velocity.x *= -1;
         rctA.velocity.x *= (1 - collisionDamper);
+    }
+	
+	if(xB < radius) {
+        xB = radius;
+        rctB.velocity.x *= -1;
+        rctB.velocity.x *= (1 - collisionDamper);
     }
 	
 	//Sets the x,y postion of the ball
