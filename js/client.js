@@ -49,8 +49,8 @@ $(document).ready(function () {
 	   //console.log(userNumber);
 	   socket.emit('message', {
 	   	operation: 'input',
-		input: input
-		//input: input + userNumber
+		userNumber: userNumber,
+		input: input 
 	   });
 	   
 	});
@@ -62,29 +62,62 @@ $(document).ready(function () {
 		if (message.operation == 'userNumber') {
 			userNumber=message.userNumber;
 			//console.log(userNumber);
-		}	
-		if(message.operation = 'movement'){
-			serverOutput=message.output;
-			//console.log(serverOutput);
+		}
 		
-			switch(serverOutput){
+		if(message.operation = 'movement'){
+			
+			if(message.userNumber==1){
+				
+				serverOutput=message.output;
+				
+				switch(serverOutput){
 		   
-				case 'A': // A
+					case 'A': // A
 		   	
-					rctA.velocity.x = -5;
-					break;
-			
-				case 'D': // D
-						
-					rctA.velocity.x = 5;
-					break;
-			
-				case 'W': // W
-					if(rctA.velocity.y == 0){
-						rctA.velocity.y = -6;
+						rctA.velocity.x = -5;
 						break;
-					}
-			};
+			
+					case 'D': // D
+						
+						rctA.velocity.x = 5;
+						break;
+			
+					case 'W': // W
+						if(rctA.velocity.y == 0){
+							rctA.velocity.y = -6;
+							break;
+						}
+				};
+			}
+		}
+		
+		if(message.operation = 'movement'){
+			
+			console.log(message.userNumer);
+			
+			if(message.userNumber==2){
+				
+				serverOutput=message.output;
+				
+				switch(serverOutput){
+		   
+					case 'A': // A
+		   	
+						rctB.velocity.x = -5;
+						break;
+			
+					case 'D': // D
+						
+						rctB.velocity.x = 5;
+						break;
+			
+					case 'W': // W
+						if(rctB.velocity.y == 0){
+							rctB.velocity.y = -6;
+							break;
+						}
+				};
+			}
 		}
 		
 	});
@@ -103,7 +136,7 @@ function timer(){
    	setTimeout(function () {
 					
 		countDown--;   
-		console.log(countDown);
+		//console.log(countDown);
 			
 			
       	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
