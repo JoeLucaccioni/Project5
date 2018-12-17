@@ -1,4 +1,4 @@
-var port=8437;
+var port=8438;
 var socket = io.connect('http://cslab.kenyon.edu:'+port);
 
 var serverOutput;
@@ -49,8 +49,8 @@ $(document).ready(function () {
 	   //console.log(userNumber);
 	   socket.emit('message', {
 	   	operation: 'input',
-		userNumber: userNumber,
-		input: input 
+		input: input,
+		user: userNumber
 	   });
 	   
 	});
@@ -61,26 +61,16 @@ $(document).ready(function () {
 		  
 		if (message.operation == 'userNumber') {
 			userNumber=message.userNumber;
-			console.log("user number assigned");
-		}
-		
-		if(message.operation = 'movement'){
-			
-			console.log(message.userNumber);
-			
+		}	
+		if(message.operation == 'movement'){
 			if(message.userNumber==1){
-				
 				serverOutput=message.output;
-				
 				switch(serverOutput){
-		   
 					case 'A': // A
-		   	
 						rctA.velocity.x = -5;
 						break;
 			
 					case 'D': // D
-						
 						rctA.velocity.x = 5;
 						break;
 			
@@ -92,27 +82,21 @@ $(document).ready(function () {
 				};
 			}
 		}
-		
 		if(message.operation = 'movement'){
-			
-			console.log(message.userNumber);
-			
-			if(message.userNumber==2){
-				
+			console.log(message.userNumer);
+			if(message.userNumber == 2){
 				serverOutput=message.output;
 				
 				switch(serverOutput){
 		   
 					case 'A': // A
-		   	
 						rctB.velocity.x = -5;
 						break;
 			
 					case 'D': // D
-						
 						rctB.velocity.x = 5;
 						break;
-			
+
 					case 'W': // W
 						if(rctB.velocity.y == 0){
 							rctB.velocity.y = -6;
@@ -121,11 +105,28 @@ $(document).ready(function () {
 				};
 			}
 		}
-		
+		if(message.operation == 'attack'){
+			console.log("player was hit");
+			console.log(message.hit);
+			if(message.hit == 'R'){
+				rightHits++;
+    			$("#counterR").empty()
+				$("#counterR").append(rightHits);
+			}else if(message.hit == 'L'){
+				leftHits++;
+				$("#counterL").empty()
+				$("#counterL").append(leftHits);
+			}
+			rctA.setPosition({x:190, y:500});
+    		rctB.setPosition({x:width-190, y:500});	
+		}
+		if(message.operation == 'Complete'){
+			console.log(message.winner);
+		}
 	});
 	timer();
+
 	var time = countDown;
-	//$("#timer").html(time);
 	$("#counterR").append(rightHits);
 	$("#counterL").append(leftHits);
 });
@@ -145,7 +146,7 @@ function timer(){
         	timer();              
       	}
       	else{
-      		countDown = 0;
+      		winnerCheck();
       	}
 			
    	}, 1000);
@@ -159,28 +160,29 @@ function handleCollision() {
 	var moverB = rctB.getClientRect();
     var xA = rctA.getX();
     var yA = rctA.getY();
+	var xB = rctB.getX();
+	var yB = rctB.getY();
 	
-	if(intersect(moverA, targetRectB)){
-    	//rctA.velocity.x *= 0;
-    	//rctA.velocity.y *= 0;
-    	console.log("right player lands hit");
-    	rightHits++;
-    	$("#counterR").empty()
-		$("#counterR").append(rightHits);
+	if(userNumber == 2){
+		if(intersect(moverA, targetRectB)){
+    		console.log("right player lands hit");
+    		victory('R');
+    	}
     }
-    if(intersect(moverB, targetRectA)){
-    	//rctA.velocity.x *= 0;
-    	//rctA.velocity.y *= 0;
-    	console.log("left player lands hit");
-    	leftHits++;
-    	$("#counterL").empty()
-		$("#counterL").append(leftHits);
+    if(userNumber == 1){
+    	if(intersect(moverB, targetRectA)){
+    		console.log("left player lands hit");
+    		victory('L');
+    	}
     }
     if(intersect(moverA, moverB)){
 		console.log("collision");
     	rctA.velocity.x *= 0;
     	rctA.velocity.y *= 0;
-    	rctA.setPosition({x:xA-1, y:yA});
+    	rctA.setPosition({x:xA+1, y:yA});
+    	rctB.velocity.x *= 0;
+    	rctB.velocity.y *= 0;
+    	rctB.setPosition({x:xB-1, y:yB});
     }
 }
 
@@ -200,9 +202,27 @@ function victory(victor){
 		victor: victor
 	   });
 }
-	
-var width = window.innerWidth;
-var height = window.innerHeight-30;
+
+function winnerCheck(){
+	if(leftHits > rightHits){
+		socket.emit('message', {
+			operation: 'winner',
+			winner: 'L'
+		});
+	}else if(rightHits > leftHits){
+		socket.emit('message', {
+			operation: 'winner',
+			winner: 'R'
+		});
+	}else if(rightHits == leftHits){
+		socket.emit('message', {
+			operation: 'winner',
+			winner: 'N'
+		});
+	}
+}
+var width = 900;
+var height = 740;
 	
 //physics variables
 var floorFriction = 10;
@@ -216,9 +236,6 @@ var rightHits = 0;
 	
 function updateRect(frame) {
     var timeDiff = frame.timeDiff;
-    //var stage = ball.getStage();
-    //var height = stage.getHeight();
-    //var width = stage.getWidth();
     var xA = rctA.getX();
     var yA = rctA.getY();
     var xB = rctB.getX();
@@ -343,7 +360,7 @@ var sword_w=4;  //sword width
 var sword_h=70; //sword height
 var sword_a=35; //sword angle
 
-// create ballA
+// create rectA
 var rctA = new Konva.Rect({
     x: 190,
     y: 500,
@@ -354,7 +371,7 @@ var rctA = new Konva.Rect({
 });
 
 
-// create ballB
+// create rectB
 var rctB = new Konva.Rect({
     x: width-190,
     y: 500,
@@ -400,12 +417,6 @@ swordLayer.add(swordA, swordB);
 rctLayer.add(rctA, rctB);
 stage.add(rctLayer, swordLayer);
 
-/*var tween = new Konva.Tween({
-    node: ball,
-    fill: 'red',
-    duration: 0.3,
-    easing: Konva.Easings.EaseOut
-});*/
   
 //Animation that moves ball    
 anim = new Konva.Animation(function(frame) {
