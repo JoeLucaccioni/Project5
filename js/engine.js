@@ -64,11 +64,11 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	   	}else if(message.operation == 'victory'){
 	   		console.log(message.victor);
 	   		socket.emit('message', {
-				operation: 'damage',
+				operation: 'attack',
 				hit: message.victor
 	   		});
 	   		socket.broadcast.emit('message', {
-				operation: 'damage',
+				operation: 'attack',
 				hit: message.victor
 	   		});
 	   	}else if(message.operation == 'winner'){

@@ -107,7 +107,7 @@ $(document).ready(function () {
 				};
 			}
 		}
-		if(message.operation == 'damage'){
+		if(message.operation == 'attack'){
 			console.log("player was hit");
 			console.log(message.hit);
 			if(message.hit == 'R'){
