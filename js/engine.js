@@ -56,12 +56,12 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 			socket.emit('message', {
 			operation: 'movement',
 			output: message.input,
-			userNumber: users
+			userNumber: message.userNumber
 			});
 			socket.broadcast.emit('message', {
 			operation: 'movement',
 			output: message.input,
-			userNumber: users
+			userNumber: message.userNumber
 			});
 			console.log('input '+ message.input);
 			console.log('userNumber '+message.userNumber);
