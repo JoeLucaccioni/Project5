@@ -42,13 +42,12 @@ io.sockets.on('connection', function(socket) { // Connection event handler
     console.log('A client is connected!');
 	
 	socket.on('message', function(message){
-		if(message.operation=='join'){
+		if(message.operation =='join'){
 			users++;
 			socket.emit('message', {
 				operation: 'userNumber',
 				userNumber: users
 			});
-<<<<<<< HEAD
 		}else if(message.operation == 'input'){
 			socket.emit('message', {
 				operation: 'movement',
@@ -82,27 +81,7 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	   			winner: message.winner
 	   		});
 	   	}
-=======
-		}
 	});
-	socket.on('message', function(message){ // Input event handler
-		if(message.operation=='input'){
-			socket.emit('message', {
-			operation: 'movement',
-			output: message.input,
-			userNumber: users
-			});
-			socket.broadcast.emit('message', {
-			operation: 'movement',
-			output: message.input,
-			userNumber: users
-			});
-			console.log('input '+ message.input);
-			console.log('userNumber '+message.userNumber);
-		};
->>>>>>> d7f4923b03f2013137c9392a9bafc581fe955fca
-	});
-	
 });
 server.listen(port);
 console.log("Listening on port: "+port);

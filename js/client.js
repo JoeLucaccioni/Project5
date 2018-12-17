@@ -60,11 +60,11 @@ $(document).ready(function () {
 	socket.on('message', function(message) { //Event Handler for parsing server messages and moving the ball
 		  
 		if (message.operation == 'userNumber') {
-			userNumber=message.userNumber;
+			userNumber = message.userNumber;
 			//console.log(userNumber);
 		}	
-		if(message.operation = 'movement'){
-			if(message.userNumber==1){
+		if(message.operation == 'movement'){
+			if(message.userNumber == 1){
 				serverOutput=message.output;
 				switch(serverOutput){
 					case 'A': // A
@@ -82,14 +82,9 @@ $(document).ready(function () {
 						}
 				};
 			}
-		}
-		if(message.operation = 'movement'){
-			console.log(message.userNumer);
 			if(message.userNumber == 2){
 				serverOutput=message.output;
-				
 				switch(serverOutput){
-		   
 					case 'A': // A
 						rctB.velocity.x = -5;
 						break;
@@ -109,19 +104,21 @@ $(document).ready(function () {
 		if(message.operation == 'attack'){
 			console.log("player was hit");
 			console.log(message.hit);
-			if(message.hit == 'R'){
+			if(message.hit == 'R'){	
+				rctA.setPosition({x:190, y:500});
+    			rctB.setPosition({x:width-190, y:500});	
 				rightHits++;
     			$("#counterR").empty()
 				$("#counterR").append(rightHits);
 			}else if(message.hit == 'L'){
+				rctA.setPosition({x:190, y:500});
+    			rctB.setPosition({x:width-190, y:500});	
 				leftHits++;
 				$("#counterL").empty()
 				$("#counterL").append(leftHits);
 			}
-			rctA.setPosition({x:190, y:500});
-    		rctB.setPosition({x:width-190, y:500});	
 		}
-		if(message.operation == 'Complete'){
+		if(message.operation = 'Complete'){
 			console.log(message.winner);
 		}
 	});
@@ -220,8 +217,8 @@ function winnerCheck(){
 		});
 	}
 }
-var width = 900;
-var height = 740;
+var width = 1400;
+var height = 750;
 	
 //physics variables
 var floorFriction = 10;
@@ -295,11 +292,6 @@ function updateRect(frame) {
 
     // left wall condition
     if(xA < radius) {
-    	/*console.log("hit left wall");
-    	leftHits++;
-    	$("#counterL").empty();
-    	$("#counterL").append(leftHits);
-    	console.log(leftHits);*/
         xA = radius;
         rctA.velocity.x *= -1;
         rctA.velocity.x *= (1 - collisionDamper);
