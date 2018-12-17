@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var users=0;
-var port=8437;
+var port=8438;
 
 var server = http.createServer(function(req, res) {
   var url = req.url;
@@ -42,23 +42,45 @@ io.sockets.on('connection', function(socket) { // Connection event handler
     console.log('A client is connected!');
 	
 	socket.on('message', function(message){
-		if(message.operation=='join')
-		{
+		if(message.operation=='join'){
 			users++;
 			socket.emit('message', {
 				operation: 'userNumber',
 				userNumber: users
 			});
-		}
-	});
-	socket.on('message', function(message){ // Input event handler
-		//console.log(message.input);
-		socket.emit('message', {
-		output: message.input
-	   });
-	   socket.broadcast.emit('message', {
-		output: message.input
-	   });
+		}else if(message.operation == 'input'){
+			socket.emit('message', {
+				operation: 'movement',
+				output: message.input,
+				userNumber: users
+			});
+			socket.broadcast.emit('message', {
+				operation: 'movement',
+				output: message.input,
+				userNumber: users
+			});
+			console.log('input '+ message.input);
+			console.log('userNumber '+message.userNumber);
+	   	}else if(message.operation == 'victory'){
+	   		console.log(message.victor);
+	   		socket.emit('message', {
+				operation: 'damage',
+				hit: message.victor
+	   		});
+	   		socket.broadcast.emit('message', {
+				operation: 'damage',
+				hit: message.victor
+	   		});
+	   	}else if(message.operation == 'winner'){
+	   		socket.emit('message', {
+	   			operation: 'Complete',
+	   			winner: message.winner
+	   		});
+	   		socket.broadcast.emit('message', {
+	   			operation: 'Complete',
+	   			winner: message.winner
+	   		});
+	   	}
 	});
 });
 server.listen(port);
