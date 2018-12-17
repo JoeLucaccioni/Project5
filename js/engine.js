@@ -1,6 +1,6 @@
 var http = require('http');
 var fs = require('fs');
-
+var users=0;
 var port=8437;
 
 var server = http.createServer(function(req, res) {
@@ -41,6 +41,16 @@ var io = require('socket.io').listen(server);
 io.sockets.on('connection', function(socket) { // Connection event handler
     console.log('A client is connected!');
 	
+	socket.on('message', function(message){
+		if(message.operation=='join')
+		{
+			users++;
+			socket.emit('message', {
+				operation: 'userNumber',
+				userNumber: users
+			});
+		}
+	});
 	socket.on('message', function(message){ // Input event handler
 		//console.log(message.input);
 		socket.emit('message', {
