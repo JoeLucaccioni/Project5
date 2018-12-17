@@ -52,14 +52,22 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 		}
 	});
 	socket.on('message', function(message){ // Input event handler
-		//console.log(message.input);
-		socket.emit('message', {
-		output: message.input
-	   });
-	   socket.broadcast.emit('message', {
-		output: message.input
-	   });
+		if(message.operation=='input'){
+			socket.emit('message', {
+			operation: 'movement',
+			output: message.input,
+			userNumber: users
+			});
+			socket.broadcast.emit('message', {
+			operation: 'movement',
+			output: message.input,
+			userNumber: users
+			});
+			console.log('input '+ message.input);
+			console.log('userNumber '+message.userNumber);
+		};
 	});
+	
 });
 server.listen(port);
 console.log("Listening on port: "+port);
