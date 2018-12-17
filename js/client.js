@@ -51,7 +51,6 @@ $(document).ready(function () {
 	   	operation: 'input',
 		input: input,
 		user: userNumber
-		//input: input + userNumber
 	   });
 	   
 	});
@@ -98,7 +97,7 @@ $(document).ready(function () {
 					case 'D': // D
 						rctB.velocity.x = 5;
 						break;
-			
+
 					case 'W': // W
 						if(rctB.velocity.y == 0){
 							rctB.velocity.y = -6;
@@ -125,7 +124,6 @@ $(document).ready(function () {
 		if(message.operation == 'Complete'){
 			console.log(message.winner);
 		}
-		
 	});
 	timer();
 	$("#counterR").append(rightHits);
@@ -140,7 +138,7 @@ function timer(){
    	setTimeout(function () {
 					
 		countDown--;   
-		console.log(countDown);
+		//console.log(countDown);
 			
 			
       	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
