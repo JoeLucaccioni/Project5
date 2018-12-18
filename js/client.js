@@ -45,6 +45,12 @@ $(document).ready(function () {
 			input='W';
 			//console.log(input);
 			break;
+			
+		case 32: // space
+			
+			input='_';
+			//console.log(input);
+			break;
 	   }
 	   //console.log(userNumber);
 	   socket.emit('message', {
@@ -80,6 +86,54 @@ $(document).ready(function () {
 							rctA.velocity.y = -6;
 							break;
 						}
+						
+					case '_': // space
+				
+						//console.log("1swing=", swing);
+						//console.log("swing");
+					
+						//Only swing sword if it is not currently being swung
+						if(swordA.swing==0){
+				
+							swordA.swing++;
+					  		var angularSpeed = 500; //speed sword swings
+					    	swordA.angle=0;
+					    
+					   		//start down swing
+    						var swordSwing = new Konva.Animation(function(frame) {
+       						var angleDiff = frame.timeDiff * angularSpeed / 1000;
+       						swordA.angle+=angleDiff;
+       							if (swordA.angle>60) {
+       						  		angularSpeed=-500;
+       						  	}
+       						  	if (swordA.angle<0) {
+       						 	swordSwing.stop();	
+       						  	}
+      						  	swordA.rotate(angleDiff);
+        					}, swordLayer);
+							swordSwing.start();
+						
+						/*stop down swing
+						setTimeout(function () {
+							swingDown.stop();
+						}, 100);
+						
+						//start up swing
+						var swingUp = new Konva.Animation(function(frame) {
+       					var angleDiff = frame.timeDiff * -angularSpeed / 1000;
+      						  swordA.rotate(angleDiff);
+        					 }, swordLayer);
+						swingUp.start();
+						
+						//stop up swing
+						setTimeout(function () {
+							swingUp.stop();
+						}, 100);*/
+						
+						swordA.setRotation(sword_a);
+						swordA.swing=0;
+					}	
+					break;			
 				};
 			}
 			if(message.userNumber == 2){
@@ -334,7 +388,7 @@ function updateRect(frame) {
     rctB.setPosition({x:xB, y:yB});
     
     //Sets the x,y postion of the sword based on the movement of the ball
-    swordA.setPosition({x:(xA+65), y:yA-30});
+    swordA.setPosition({x:(xA+25), y:yA+25});
     swordB.setPosition({x:(xB-30), y:yB-30});
 
 	//detects collision between swords and balls
@@ -386,8 +440,13 @@ var swordA = new Konva.Rect({
 	width: sword_w,
 	height: sword_h,
 	rotation: sword_a,
-	fill: 'blue'
+	fill: 'blue',
+	offset: {
+            x: 0,
+            y: sword_h
+        }
 });
+swordA.swing = 0;
 
 // create swordB
 var swordB = new Konva.Rect({
