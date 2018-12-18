@@ -61,7 +61,7 @@ $(document).ready(function () {
 		  
 		if (message.operation == 'userNumber') {
 			userNumber = message.userNumber;
-			//console.log(userNumber);
+			console.log(userNumber);
 		}	
 		if(message.operation == 'movement'){
 			if(message.userNumber == 1){
@@ -118,7 +118,7 @@ $(document).ready(function () {
 				$("#counterL").append(leftHits);
 			}
 		}
-		if(message.operation = 'Complete'){
+		if(message.operation == 'Complete'){
 			console.log(message.winner);
 		}
 	});
