@@ -48,19 +48,20 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 				operation: 'userNumber',
 				userNumber: users
 			});
-		}else if(message.operation == 'input'){
+		}else if(message.operation == 'input' && users >= 2){
+			console.log(message.user);
 			socket.emit('message', {
 				operation: 'movement',
 				output: message.input,
-				userNumber: users
+				userNumber: message.user
 			});
 			socket.broadcast.emit('message', {
 				operation: 'movement',
 				output: message.input,
-				userNumber: users
+				userNumber: message.user
 			});
-			console.log('input '+ message.input);
-			console.log('userNumber '+message.userNumber);
+			//console.log('input '+ message.input);
+			//console.log('userNumber '+message.userNumber);
 	   	}else if(message.operation == 'victory'){
 	   		console.log(message.victor);
 	   		socket.emit('message', {
@@ -82,7 +83,7 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	   		});
 	   	}
 	});
-<<<<<<< HEAD
+
 	socket.on('message', function(message){ // Input event handler
 		if(message.operation=='input'){
 			socket.emit('message', {
@@ -95,14 +96,13 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 			output: message.input,
 			userNumber: message.userNumber
 			});
-			console.log('input '+ message.input);
-			console.log('userNumber '+message.userNumber);
+			//console.log('input '+ message.input);
+			//console.log('userNumber '+message.userNumber);
 		};
->>>>>>> d7f4923b03f2013137c9392a9bafc581fe955fca
+
 	});
 	
-=======
->>>>>>> 03fbc01aaf8fbebbdb613abd12896e220434d73f
+
 });
 server.listen(port);
 console.log("Listening on port: "+port);
