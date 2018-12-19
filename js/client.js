@@ -5,7 +5,7 @@ var serverOutput;
 var userNumber;
 var leftHits = 0;
 var rightHits = 0;
-var countDown = 100;
+var time = 100;
 
 
 $(document).ready(function () {
@@ -31,12 +31,6 @@ $(document).ready(function () {
 		case 100: // D
 						
 			input='D';
-			//console.log(input);
-			break;
-			
-		case 115: // S
-			
-			input='S';
 			//console.log(input);
 			break;
 			
@@ -88,10 +82,6 @@ $(document).ready(function () {
 						}
 						
 					case '_': // space
-				
-						//console.log("1swing=", swing);
-						//console.log("swing");
-					
 						//Only swing sword if it is not currently being swung
 						if(swordA.swing==0){
 				
@@ -112,23 +102,6 @@ $(document).ready(function () {
       						  	swordA.rotate(angleDiff);
         					}, swordLayer);
 							swordSwing.start();
-						
-						/*stop down swing
-						setTimeout(function () {
-							swingDown.stop();
-						}, 100);
-						
-						//start up swing
-						var swingUp = new Konva.Animation(function(frame) {
-       					var angleDiff = frame.timeDiff * -angularSpeed / 1000;
-      						  swordA.rotate(angleDiff);
-        					 }, swordLayer);
-						swingUp.start();
-						
-						//stop up swing
-						setTimeout(function () {
-							swingUp.stop();
-						}, 100);*/
 						
 						swordA.setRotation(sword_a);
 						swordA.swing=0;
@@ -152,6 +125,32 @@ $(document).ready(function () {
 							rctB.velocity.y = -6;
 							break;
 						}
+					case '_': //spacebar
+						//Only swing sword if it is not currently being swung
+						if(swordB.swing == 0){
+				
+							swordB.swing++;
+					  		var angularSpeed = - 500; //speed sword swings
+					    	swordB.angle = 0;
+					    
+					   		//start down swing
+    						var swordSwing = new Konva.Animation(function(frame) {
+       						var angleDiff = frame.timeDiff * angularSpeed / 1000;
+       						swordB.angle -= angleDiff;
+       							if (swordB.angle < -60) {
+       						  		angularSpeed = 500;
+       						  	}
+       						  	if (swordB.angle > 0) {
+       						 	swordSwing.stop();	
+       						  	}
+      						  	swordB.rotate(angleDiff);
+        					}, swordLayer);
+							swordSwing.start();
+						
+						swordA.setRotation(sword_a);
+						swordA.swing=0;
+					}	
+					break;	
 				};
 			}
 		}
@@ -174,17 +173,21 @@ $(document).ready(function () {
 		}
 		if(message.operation == 'Complete'){
 			console.log(message.winner);
+			alert(message.winner);
+		}
+		if(message.operation == 'time'){
+			time = message.time;
+			console.log(time);
 		}
 	});
-	timer();
-
-	var time = countDown;
+	//timer();
+	$('#timer').text(time);
 	$("#counterR").append(rightHits);
 	$("#counterL").append(leftHits);
 });
 
 //times the match
-function timer(){ 	
+/*function timer(){ 	
 				
 	$('#timer').text(countDown);
 		
@@ -202,7 +205,7 @@ function timer(){
       	}
 			
    	}, 1000);
-}
+}*/
 
 //detects and handles collisions of swords and bodies
 function handleCollision() {
@@ -259,20 +262,45 @@ function winnerCheck(){
 	if(leftHits > rightHits){
 		socket.emit('message', {
 			operation: 'winner',
-			winner: 'L'
+			winner: 'Blue wins'
 		});
 	}else if(rightHits > leftHits){
 		socket.emit('message', {
 			operation: 'winner',
-			winner: 'R'
+			winner: 'Red wins'
 		});
 	}else if(rightHits == leftHits){
 		socket.emit('message', {
 			operation: 'winner',
-			winner: 'N'
+			winner: 'Draw'
 		});
 	}
 }
+
+/*function swordSwing(){
+					
+	swordA.swing++;
+	var angularSpeed = 500; //speed sword swings
+	swordA.angle=0;
+					    
+	//start down swing
+    var swordSwing = new Konva.Animation(function(frame) {
+    var angleDiff = frame.timeDiff * angularSpeed / 1000;
+    swordA.angle+=angleDiff;
+    if (swordA.angle>60) {
+    	angularSpeed=-500;
+    }
+    if (swordA.angle<0) {
+       	swordSwing.stop();	
+    }
+    swordA.rotate(angleDiff);
+    }, swordLayer);
+	swordSwing.start();
+						
+	swordA.setRotation(sword_a);
+	swordA.swing=0;
+}*/
+
 var width = 1400;
 var height = 750;
 	
@@ -455,8 +483,13 @@ var swordB = new Konva.Rect({
 	width: sword_w,
 	height: sword_h,
 	rotation: -sword_a,
-	fill: 'red'
+	fill: 'red',
+	offset: {
+            x: 0,
+            y: sword_h
+        }
 });
+swordB.swing = 0;
 
 // custom property
 rctA.velocity = {
