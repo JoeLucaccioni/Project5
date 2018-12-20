@@ -2,7 +2,8 @@ var http = require('http');
 var fs = require('fs');
 var users=0;
 var port=8438;
-var countDown = 100;
+var rscore=0;
+var lscore=0;
 
 var server = http.createServer(function(req, res) {
   var url = req.url;
@@ -68,14 +69,24 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 			//console.log('input '+ message.input);
 			//console.log('userNumber '+message.userNumber);
 	   	}else if(message.operation == 'victory'){
-	   		console.log(message.victor);
+	   		//console.log(message.victor);
+			if(message.victor == 'L'){
+				lscore++;
+			}
+			if(message.victor == 'R'){
+				rscore++;
+			}
 	   		socket.emit('message', {
 				operation: 'attack',
-				hit: message.victor
+				hit: message.victor,
+				rscore: rscore,
+				lscore: lscore
 	   		});
 	   		socket.broadcast.emit('message', {
 				operation: 'attack',
-				hit: message.victor
+				hit: message.victor,
+				rscore: rscore,
+				lscore: lscore
 	   		});
 	   	}else if(message.operation == 'winner'){
 	   		socket.emit('message', {
@@ -109,7 +120,7 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	
 	function timer(){ 	
 
-	console.log(countDown);
+	//console.log(countDown);
 				
 	socket.emit('message', {
 		operation: 'timer',
@@ -138,28 +149,6 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 }
 
 });
-
-if(users >= 2){
-    setTimeout(function () {
-    	var time = timer();
-    	socket.emit('message', {
-    		operation: 'time',
-    		time: time
-    	})
-    	socket.broadcast.emit('message', {
-    		operation: 'time',
-    		time: time
-    	})
-    }, 1000);
-    console.log(time);
-}
-
-//times the match
-function timer(){ 			
-	countDown--; 	
-   	return countDown;
-}
-
 server.listen(port);
 console.log("Listening on port: "+port);
 
