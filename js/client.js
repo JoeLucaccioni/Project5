@@ -61,9 +61,10 @@ $(document).ready(function () {
 			userNumber = message.userNumber;
 			console.log(userNumber);
 		}	
-		if(message.operation == 'timer')
-		{
+		if(message.operation == 'timer'){
 			$('#timer').text(message.timer);
+			if(message.timer <= 0)
+				winnerCheck();
 		}
 		if(message.operation == 'movement'){
 			if(message.userNumber == 1){
@@ -132,15 +133,15 @@ $(document).ready(function () {
 						if(swordB.swing == 0){
 				
 							swordB.swing++;
-					  		var angularSpeed = -500; //speed sword swings
+					  		var angularSpeed = 500; //speed sword swings
 					    	swordB.angle = 0;
 					    
 					   		//start down swing
     						var swordSwing = new Konva.Animation(function(frame) {
        						var angleDiff = frame.timeDiff * angularSpeed / 1000;
-       						swordB.angle += angleDiff;
-       							if (swordB.angle > -60) {
-       						  		angularSpeed = 500;
+       						swordB.angle -= angleDiff;
+       							if (swordB.angle < 60) {
+       						  		angularSpeed = -500;
        						  	}
        						  	if (swordB.angle > 0) {
        						 	swordSwing.stop();	
@@ -150,7 +151,7 @@ $(document).ready(function () {
 							swordSwing.start();
 						
 						swordB.setRotation(-sword_a);
-						swordB.swing=0;
+						swordB.swing = 0;
 					}	
 					break;	
 				};
@@ -177,17 +178,11 @@ $(document).ready(function () {
 			console.log(message.winner);
 			alert(message.winner);
 		}
-		if(message.operation == 'time'){
-			time = message.time;
-			console.log(time);
-		}
 	});
 	
 	$("#counterR").append(rightHits);
 	$("#counterL").append(leftHits);
 });
-
-
 
 //detects and handles collisions of swords and bodies
 function handleCollision() {

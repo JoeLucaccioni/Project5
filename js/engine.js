@@ -125,7 +125,7 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 		//console.log(countDown);
 			
 			
-      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
+      	if (countDown >= 0){  //while user still has time, call the function recursively until they run out or answer a question          
         	timer();              
       	}
       	else{
@@ -137,28 +137,5 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 
 });
 
-if(users >= 2){
-	timer();
-}
-
-function timer(){
-   	setTimeout(function () {
-					
-		countDown--;   
-		//console.log(countDown);
-			
-      	if (countDown >= 0){  //while user still has time, call the function recursively until they run out or answer a question          
-        	socket.broadcast.emit('message', {
-        		operation: 'time',
-        		time: countDown
-        	});
-        	timer();              
-      	}	
-   	}, 1000);
-}
-
 server.listen(port);
 console.log("Listening on port: "+port);
-
-var countDown = 100;
-
