@@ -1,7 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var users=0;
-var port=8438;
+var port=8437;
 var countDown = 100;
 
 var server = http.createServer(function(req, res) {
@@ -43,7 +43,7 @@ io.sockets.on('connection', function(socket) { // Connection event handler
     console.log('A client is connected!');
 	
 	socket.on('message', function(message){
-		if(message.operation =='join'){
+		if(message.operation == 'join'){
 			users++;
 			socket.emit('message', {
 				operation: 'userNumber',
@@ -88,17 +88,15 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	socket.on('message', function(message){ // Input event handler
 		if(message.operation=='input'){
 			socket.emit('message', {
-			operation: 'movement',
-			output: message.input,
-			userNumber: message.userNumber
+				operation: 'movement',
+				output: message.input,
+				userNumber: message.userNumber
 			});
 			socket.broadcast.emit('message', {
-			operation: 'movement',
-			output: message.input,
-			userNumber: message.userNumber
+				operation: 'movement',
+				output: message.input,
+				userNumber: message.userNumber
 			});
-			//console.log('input '+ message.input);
-			//console.log('userNumber '+message.userNumber);
 		};
 
 	});
@@ -107,24 +105,23 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 });
 
 if(users >= 2){
-    setTimeout(function () {
-    	var time = timer();
-    	socket.emit('message', {
-    		operation: 'time',
-    		time: time
-    	})
-    	socket.broadcast.emit('message', {
-    		operation: 'time',
-    		time: time
-    	})
-    }, 1000);
-    console.log(time);
+	timer();
 }
 
-//times the match
-function timer(){ 			
-	countDown--; 	
-   	return countDown;
+function timer(){
+   	setTimeout(function () {
+					
+		countDown--;   
+		//console.log(countDown);
+			
+      	if (countDown >= 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        	socket.broadcast.emit('message', {
+        		operation: 'time',
+        		time: countDown
+        	});
+        	timer();              
+      	}	
+   	}, 1000);
 }
 
 server.listen(port);

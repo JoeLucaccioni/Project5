@@ -1,4 +1,4 @@
-var port=8438;
+var port=8437;
 var socket = io.connect('http://cslab.kenyon.edu:'+port);
 
 var serverOutput;
@@ -19,8 +19,6 @@ $(document).ready(function () {
 	  
 	  var input;
 	  switch(e.keyCode){
-		  
-		
 		   
 		case 97: // A
 		   	
@@ -130,14 +128,14 @@ $(document).ready(function () {
 						if(swordB.swing == 0){
 				
 							swordB.swing++;
-					  		var angularSpeed = - 500; //speed sword swings
+					  		var angularSpeed = -500; //speed sword swings
 					    	swordB.angle = 0;
 					    
 					   		//start down swing
     						var swordSwing = new Konva.Animation(function(frame) {
        						var angleDiff = frame.timeDiff * angularSpeed / 1000;
-       						swordB.angle -= angleDiff;
-       							if (swordB.angle < -60) {
+       						swordB.angle += angleDiff;
+       							if (swordB.angle > -60) {
        						  		angularSpeed = 500;
        						  	}
        						  	if (swordB.angle > 0) {
@@ -147,8 +145,8 @@ $(document).ready(function () {
         					}, swordLayer);
 							swordSwing.start();
 						
-						swordA.setRotation(sword_a);
-						swordA.swing=0;
+						swordB.setRotation(-sword_a);
+						swordB.swing=0;
 					}	
 					break;	
 				};
@@ -277,30 +275,6 @@ function winnerCheck(){
 	}
 }
 
-/*function swordSwing(){
-					
-	swordA.swing++;
-	var angularSpeed = 500; //speed sword swings
-	swordA.angle=0;
-					    
-	//start down swing
-    var swordSwing = new Konva.Animation(function(frame) {
-    var angleDiff = frame.timeDiff * angularSpeed / 1000;
-    swordA.angle+=angleDiff;
-    if (swordA.angle>60) {
-    	angularSpeed=-500;
-    }
-    if (swordA.angle<0) {
-       	swordSwing.stop();	
-    }
-    swordA.rotate(angleDiff);
-    }, swordLayer);
-	swordSwing.start();
-						
-	swordA.setRotation(sword_a);
-	swordA.swing=0;
-}*/
-
 var width = 1400;
 var height = 750;
 	
@@ -417,7 +391,7 @@ function updateRect(frame) {
     
     //Sets the x,y postion of the sword based on the movement of the ball
     swordA.setPosition({x:(xA+25), y:yA+25});
-    swordB.setPosition({x:(xB-30), y:yB-30});
+    swordB.setPosition({x:(xB+10), y:yB+25});
 
 	//detects collision between swords and balls
 	handleCollision();
