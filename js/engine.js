@@ -2,6 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var users=0;
 var port=8438;
+var countDown = 100;
 
 var server = http.createServer(function(req, res) {
   var url = req.url;
@@ -137,6 +138,28 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 }
 
 });
+
+if(users >= 2){
+    setTimeout(function () {
+    	var time = timer();
+    	socket.emit('message', {
+    		operation: 'time',
+    		time: time
+    	})
+    	socket.broadcast.emit('message', {
+    		operation: 'time',
+    		time: time
+    	})
+    }, 1000);
+    console.log(time);
+}
+
+//times the match
+function timer(){ 			
+	countDown--; 	
+   	return countDown;
+}
+
 server.listen(port);
 console.log("Listening on port: "+port);
 
