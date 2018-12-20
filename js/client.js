@@ -61,6 +61,10 @@ $(document).ready(function () {
 			userNumber = message.userNumber;
 			console.log(userNumber);
 		}	
+		if(message.operation == 'timer')
+		{
+			$('#timer').text(message.timer);
+		}
 		if(message.operation == 'movement'){
 			if(message.userNumber == 1){
 				serverOutput=message.output;
@@ -178,32 +182,12 @@ $(document).ready(function () {
 			console.log(time);
 		}
 	});
-	//timer();
-	$('#timer').text(time);
+	
 	$("#counterR").append(rightHits);
 	$("#counterL").append(leftHits);
 });
 
-//times the match
-/*function timer(){ 	
-				
-	$('#timer').text(countDown);
-		
-   	setTimeout(function () {
-					
-		countDown--;   
-		//console.log(countDown);
-			
-			
-      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
-        	timer();              
-      	}
-      	else{
-      		winnerCheck();
-      	}
-			
-   	}, 1000);
-}*/
+
 
 //detects and handles collisions of swords and bodies
 function handleCollision() {

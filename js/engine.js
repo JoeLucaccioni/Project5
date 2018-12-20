@@ -45,6 +45,10 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	socket.on('message', function(message){
 		if(message.operation == 'join'){
 			users++;
+			if(users==2)
+			{
+				timer();
+			}
 			socket.emit('message', {
 				operation: 'userNumber',
 				userNumber: users
@@ -101,6 +105,35 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 
 	});
 	
+	function timer(){ 	
+
+	console.log(countDown);
+				
+	socket.emit('message', {
+		operation: 'timer',
+		timer: countDown
+	});
+	
+	socket.broadcast.emit('message', {
+		operation: 'timer',
+		timer: countDown
+	});
+		
+   	setTimeout(function () {
+					
+		countDown--;   
+		//console.log(countDown);
+			
+			
+      	if (countDown > 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        	timer();              
+      	}
+      	else{
+      		//winnerCheck();
+      	}
+			
+   	}, 1000);
+}
 
 });
 
@@ -126,3 +159,6 @@ function timer(){
 
 server.listen(port);
 console.log("Listening on port: "+port);
+
+var countDown = 100;
+
