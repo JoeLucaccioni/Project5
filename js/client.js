@@ -81,8 +81,8 @@ $(document).ready(function () {
 					case 'W': // W
 						if(rctA.velocity.y == 0){
 							rctA.velocity.y = -6;
-							break;
 						}
+						break;
 						
 					case '_': // space
 						//Only swing sword if it is not currently being swung
@@ -126,8 +126,8 @@ $(document).ready(function () {
 					case 'W': // W
 						if(rctB.velocity.y == 0){
 							rctB.velocity.y = -6;
-							break;
 						}
+						break;
 					case '_': //spacebar
 						//Only swing sword if it is not currently being swung
 						if(swordB.swing == 0){
