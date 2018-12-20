@@ -133,15 +133,15 @@ $(document).ready(function () {
 						if(swordB.swing == 0){
 				
 							swordB.swing++;
-					  		var angularSpeed = 500; //speed sword swings
+					  		var angularSpeed = -500; //speed sword swings
 					    	swordB.angle = 0;
 					    
 					   		//start down swing
     						var swordSwing = new Konva.Animation(function(frame) {
        						var angleDiff = frame.timeDiff * angularSpeed / 1000;
-       						swordB.angle -= angleDiff;
-       							if (swordB.angle < 60) {
-       						  		angularSpeed = -500;
+       						swordB.angle += angleDiff;
+       							if (swordB.angle < -60) {
+       						  		angularSpeed = 500;
        						  	}
        						  	if (swordB.angle > 0) {
        						 	swordSwing.stop();	
@@ -165,13 +165,13 @@ $(document).ready(function () {
     			rctB.setPosition({x:width-190, y:500});	
 				rightHits++;
     			$("#counterR").empty()
-				$("#counterR").append(rightHits);
+				$("#counterR").append(message.rscore);
 			}else if(message.hit == 'L'){
 				rctA.setPosition({x:190, y:500});
     			rctB.setPosition({x:width-190, y:500});	
 				leftHits++;
 				$("#counterL").empty()
-				$("#counterL").append(leftHits);
+				$("#counterL").append(message.lscore);
 			}
 		}
 		if(message.operation == 'Complete'){

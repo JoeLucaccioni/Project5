@@ -3,6 +3,8 @@ var fs = require('fs');
 var users=0;
 var port=8437;
 var countDown = 100;
+var rscore=0;
+var lscore=0;
 
 var server = http.createServer(function(req, res) {
   var url = req.url;
@@ -68,14 +70,24 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 			//console.log('input '+ message.input);
 			//console.log('userNumber '+message.userNumber);
 	   	}else if(message.operation == 'victory'){
-	   		console.log(message.victor);
+	   		//console.log(message.victor);
+			if(message.victor == 'L'){
+				lscore++;
+			}
+			if(message.victor == 'R'){
+				rscore++;
+			}
 	   		socket.emit('message', {
 				operation: 'attack',
-				hit: message.victor
+				hit: message.victor,
+				rscore: rscore,
+				lscore: lscore
 	   		});
 	   		socket.broadcast.emit('message', {
 				operation: 'attack',
-				hit: message.victor
+				hit: message.victor,
+				rscore: rscore,
+				lscore: lscore
 	   		});
 	   	}else if(message.operation == 'winner'){
 	   		socket.emit('message', {
@@ -107,35 +119,30 @@ io.sockets.on('connection', function(socket) { // Connection event handler
 	
 	function timer(){ 	
 
-	console.log(countDown);
-				
-	socket.emit('message', {
-		operation: 'timer',
-		timer: countDown
-	});
-	
-	socket.broadcast.emit('message', {
-		operation: 'timer',
-		timer: countDown
-	});
-		
-   	setTimeout(function () {
-					
-		countDown--;   
 		//console.log(countDown);
+				
+		socket.emit('message', {
+			operation: 'timer',
+			timer: countDown
+		});
+	
+		socket.broadcast.emit('message', {
+			operation: 'timer',
+			timer: countDown
+		});
+		
+   		setTimeout(function () {
+					
+			countDown--;   
+			//console.log(countDown);
 			
 			
-      	if (countDown >= 0){  //while user still has time, call the function recursively until they run out or answer a question          
-        	timer();              
-      	}
-      	else{
-      		//winnerCheck();
-      	}
-			
-   	}, 1000);
-}
+      		if (countDown >= 0){  //while user still has time, call the function recursively until they run out or answer a question          
+        		timer();              
+      		}	
+   		}, 1000);
+	}
 
 });
-
 server.listen(port);
 console.log("Listening on port: "+port);
